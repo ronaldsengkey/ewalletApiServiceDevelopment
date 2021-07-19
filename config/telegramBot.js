@@ -23,10 +23,9 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 bot.on('message', async (msg) => {
     console.log("message::", msg);
     let replyMessage = "Something wrong please try again";
+    const chatId = msg.chat.id;
+    const name = (msg.chat.username ? msg.chat.username : (msg.chat.title ? msg.chat.title : ""));
     try {
-        const chatId = msg.chat.id;
-        const name = (msg.chat.username ? msg.chat.username : (msg.chat.title ? msg.chat.title : ""));
-        
         let param = {
             chatId: chatId
         }
@@ -55,13 +54,14 @@ bot.on('message', async (msg) => {
             if (save) {
                 replyMessage = "Your message has been saved, @" + msg.from.username;
             }
-            bot.sendMessage(chatId, replyMessage);
+            // bot.sendMessage(chatId, replyMessage);
         } else {
-            bot.sendMessage(chatId, "list available command:\n/help");
+            // bot.sendMessage(chatId, "List available command:\n/help");
+            replyMessage = "List available command:\n/help";
         }
     } catch (error) {
         console.log("message::", error);
     }
     // send a message to the chat acknowledging receipt of their message
-    // bot.sendMessage(chatId, 'Received your message::' + chatId);
+    bot.sendMessage(chatId, replyMessage);
 });
