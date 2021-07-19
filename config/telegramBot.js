@@ -43,16 +43,17 @@ bot.on('message', async (msg) => {
         let result = await botSchema.findOneAndUpdate(param, data, option);
         console.log("result::", result);
         if (msg.text.includes('/help')) {
+            const from = msg.from.username ? msg.from.username : msg.from.first_name;
             var helpdesk = new helpdeskSchema({
                 chatId: chatId,
                 type: "telegram",
                 text: msg.text,
-                from: msg.from.username,
+                from: from,
                 raw: JSON.stringify(msg)
             });
             let save = await helpdesk.save();
             if (save) {
-                replyMessage = "Your message has been saved, @" + msg.from.username;
+                replyMessage = "Hi @" + from +", your message has been saved";
             }
             // bot.sendMessage(chatId, replyMessage);
         } else {
