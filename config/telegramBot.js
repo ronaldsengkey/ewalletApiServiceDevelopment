@@ -2,6 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const botSchema = require('../service/telegramBotSchema');
 const helpdeskSchema = require('../service/helpdeskSchema');
+const faqSchema = require('../service/faqSchema');
 
 const bot = new TelegramBot(token, {polling: true});
 
@@ -42,9 +43,9 @@ bot.on('message', async (msg) => {
         }
         let result = await botSchema.findOneAndUpdate(param, data, option);
         console.log("result::", result);
-        if (msg.text.includes('/help')) {
-            const from = msg.from.username ? msg.from.username : msg.from.first_name;
-            var helpdesk = new helpdeskSchema({
+        const from = msg.from.username ? msg.from.username : msg.from.first_name;
+        if (msg.text.includes('/helpme')) {
+            let helpdesk = new helpdeskSchema({
                 chatId: chatId,
                 type: "telegram",
                 text: msg.text,
@@ -55,10 +56,21 @@ bot.on('message', async (msg) => {
             if (save) {
                 replyMessage = "Hi @" + from +", your message has been saved";
             }
-            // bot.sendMessage(chatId, replyMessage);
+        } else if (msg.text.includes('/hello')) {
+            replyMessage = "Hi @" + from +" i am here, can i help you ?";
+        } else if (msg.text.includes('/needtoknow')) {
+            let faqs = await faqSchema.find({});
+            replyMessage = "List available topic:\n"
+            if (faqs.length < 1) {
+                let index = 1;
+                for(let faq of faqs){
+                    replyMessage += index + ". /" + faq.topic + "\n";
+                }
+            } else {
+                replyMessage += "Not available"
+            }
         } else {
-            // bot.sendMessage(chatId, "List available command:\n/help");
-            replyMessage = "List available command:\n/help";
+            replyMessage = "Not available, list available command:\n/hello\n/helpme\n/needtoknow";
         }
     } catch (error) {
         console.log("message::", error);
