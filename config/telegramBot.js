@@ -62,7 +62,7 @@ bot.on('message', async (msg) => {
             let faqs = await faqSchema.find({});
             console.log("faqs::", faqs);
             replyMessage = "List available topic:\n"
-            if (faqs.length < 1) {
+            if (faqs.length >= 1) {
                 let index = 1;
                 for(let faq of faqs){
                     replyMessage += index + ". /" + faq.topic + "\n";
