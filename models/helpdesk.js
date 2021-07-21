@@ -22,7 +22,7 @@ exports.getHelpdesk = async function(data = {
                 }
             }
             let result = await helpdeskSchema.find(param);
-            return result;
+            return resolve(result);
         } catch (error) {
             console.log("error::", error);
             return resolve(false)
