@@ -80,7 +80,7 @@ bot.on('message', async (msg) => {
                 replyMessage = "Answer:\n"
                 replyMessage += faqs[0].answer;
             } else {
-                replyMessage = "Not available, list available command:\n/hello\n/helpme\n/needtoknow";
+                replyMessage = "Not available, list available command:\n1. /hello\n2. /helpme\n3. /needtoknow";
             }
         }
     } catch (error) {
