@@ -71,7 +71,16 @@ bot.on('message', async (msg) => {
                 replyMessage += "Not available"
             }
         } else {
-            replyMessage = "Not available, list available command:\n/hello\n/helpme\n/needtoknow";
+            let faqs = await faqSchema.find({
+                "topic": msg.text.substring(1)
+            });
+            console.log("faqs::", faqs);
+            if (faqs.length >= 1) {
+                replyMessage = "Answer:\n"
+                replyMessage += faqs[0].answer;
+            } else {
+                replyMessage = "Not available, list available command:\n/hello\n/helpme\n/needtoknow";
+            }
         }
     } catch (error) {
         console.log("message::", error);
