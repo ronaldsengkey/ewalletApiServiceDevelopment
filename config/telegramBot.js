@@ -66,6 +66,7 @@ bot.on('message', async (msg) => {
                 let index = 1;
                 for(let faq of faqs){
                     replyMessage += index + ". /" + faq.topic + "\n";
+                    index++;
                 }
             } else {
                 replyMessage += "Not available"
