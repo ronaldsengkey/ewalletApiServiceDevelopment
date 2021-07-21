@@ -60,6 +60,7 @@ bot.on('message', async (msg) => {
             replyMessage = "Hi @" + from +" i am here, can i help you ?";
         } else if (msg.text.includes('/needtoknow')) {
             let faqs = await faqSchema.find({});
+            console.log("faqs::", faqs);
             replyMessage = "List available topic:\n"
             if (faqs.length < 1) {
                 let index = 1;
