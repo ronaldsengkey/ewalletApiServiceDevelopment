@@ -702,6 +702,30 @@ paths:
         500:
           description: "internal server error"
       x-swagger-router-controller: "trello"
+
+  /helpdesk:
+    get:
+      tags:
+      - "get helpdesk data"
+      summary: "it helpdesk"
+      operationId: "getHelpdesk"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "param"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "request success"
+        406:
+          description: "request"
+        500:
+          description: "internal server error"
+      x-swagger-router-controller: "helpdesk"
+
 components:
   schemas:
     updateGoogleEmail:
