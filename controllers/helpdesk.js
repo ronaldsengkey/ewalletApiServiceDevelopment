@@ -4,6 +4,7 @@ const helpdeskModel = require('../models/helpdesk');
 
 module.exports.getHelpdesk = async function(req, res){
     console.log("getHelpdesk::");
+    let response = {};
     try {
         let param = req.swagger.params['param'].value;
         if (param) {
