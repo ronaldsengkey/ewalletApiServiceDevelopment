@@ -361,7 +361,6 @@ exports.listEvents = function(param, auth){
 
 exports.getAddressCoordinate = function (data) {
     return new Promise(function (resolve, reject) {
-        // console.log("url" + "http://" + process.env.AUTHENTICATION_SERVICE_HOST + "/check/" + token);
         try {
             let address = data.address.replace(/ /g, "+");
             let mapsUrl = "https://maps.googleapis.com/maps/api/geocode/json";

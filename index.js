@@ -26,6 +26,7 @@ fastify.use(morgan('dev'));
 const io = require('socket.io')(fastify.server);
 const message = require('./models/messageM');
 const marray = require('./config/array');
+const checkSignature = require('./middleware/signature');
 
 // swaggerRouter configuration
 var options = {
@@ -47,6 +48,8 @@ oas3Tools.initializeMiddleware(swaggerDoc, function (middleware) {
   // Validate Swagger requests
   fastify.use(middleware.swaggerValidator());
 
+  fastify.use(checkSignature);
+
   // Route validated requests to appropriate controller
   fastify.use(middleware.swaggerRouter(options));
 
@@ -54,114 +57,9 @@ oas3Tools.initializeMiddleware(swaggerDoc, function (middleware) {
   fastify.use(middleware.swaggerUi());
 
   fastify.use(helmet())
-
-  // Start the server
-  // http.createServer(app).listen(serverPort, function () {
-  //   console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
-  //   console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
-  // });
   
   const amqp = require('amqplib') // Import library amqp
   // const { execSync } = require("child_process");
-
-// async function sleep(delay) {
-//     return new Promise((resolve, reject) => {
-//         setTimeout(resolve, delay);
-//     });
-// }
-
-// async function createChannel(config) {
-//   const { url, publishers, listeners } = Object.assign({url: "", publishers: {}, listeners: {}}, config);
-//   try {
-//       // create connection
-//       const connection = await amqp.connect(url);
-//       let channel = null;
-//       connection._channels = [];
-//       connection.on("error", (error) => {
-//           console.error("Connection error : ", config, error);
-//       });
-//       connection.on("close", async (error) => {
-//           if (channel) {
-//               channel.close();
-//           }
-//           console.error("Connection close : ", config, error);
-//           await sleep(1000);
-//           createChannel(config);
-//       });
-//       // create channel
-//       channel = await connection.createConfirmChannel();
-//       channel.on("error", (error) => {
-//           console.error("Channel error : ", config, error);
-//       });
-//       channel.on("close", (error) => {
-//           console.error("Channel close : ", config, error);
-//       });
-//       // register listeners
-//       for (hello in listeners) {
-//           const callback = listeners[hello];
-//           channel.assertQueue(hello, { durable: false });
-//           channel.consume(hello, callback);
-//       }
-//       // publish
-//       for (hello in publishers) {
-//           const message = publishers[hello];
-//           channel.assertQueue(hello, { durable: false });
-//           channel.sendToQueue(hello, message);
-//       }
-//       return channel;
-//   } catch (error) {
-//       console.error("Create connection error : ", error);
-//       await sleep(1000);
-//       createChannel(config);
-//   }
-// }
-
-// async function main() {
-//   // publish "hello" message to queue
-//   const channelPublish = await createChannel({
-//       url: "amqp://user:bitnami@192.168.0.100:5672",
-//       publishers: {
-//           "queue": Buffer.from("hello"),
-//       }
-//   });
-
-//   // restart rabbitmq
-//   // execSync("docker stop rabbitmq");
-//   // execSync("docker start rabbitmq");
-
-//   // consume message from queue
-//   const channelConsume = await createChannel({
-//       url: "amqp://user:bitnami@192.168.0.100:5672",
-//       listeners: {
-//           "queue": (message) => {
-//               console.log("Receive message ", message.content.toString());
-//           },
-//       }
-//   });
-
-//   return true;
-// }
-
-// main().catch((error) => console.error(error));
-
-// var server = "amqp://user:bitnami@192.168.0.100:5672";
-
-// var connection, channel;
-
-// function reportError(err){
-//   console.log("Error happened!! OH NOES!!!!");
-//   console.log(err.stack);
-//   process.exit(1);
-// }
-
-// function createChannel(conn){
-//   console.log("creating channel");
-//   connection = conn;
-//   return connection.createChannel();
-// }
-
-// cusss inisiet fungsi diatas hehe
-// producer()
 
    if(cluster.isMaster) {
 
@@ -172,7 +70,6 @@ oas3Tools.initializeMiddleware(swaggerDoc, function (middleware) {
     for (let i = 0; i < 1; i++) {
       cluster.fork();
     }
-
 
     cluster.on('online',function(worker, code, signal){
       // console.log('Worker ' + worker.process.pid + ' is online');

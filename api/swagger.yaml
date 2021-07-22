@@ -713,6 +713,10 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
+      - name: "signature"
+        in: "header"
+        required: true
+        type: "string"
       - name: "param"
         in: "header"
         required: true
@@ -733,11 +737,11 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      # parameters:
-      # - name: "param"
-      #   in: "header"
-      #   required: true
-      #   type: "string"
+      parameters:
+      - name: "signature"
+        in: "header"
+        required: true
+        type: "string"
       requestBody:
         content:
           '*/*':
@@ -764,6 +768,10 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
+      - name: "signature"
+        in: "header"
+        required: true
+        type: "string"
       - name: "param"
         in: "header"
         required: true
@@ -784,11 +792,11 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      # parameters:
-      # - name: "param"
-      #   in: "header"
-      #   required: true
-      #   type: "string"
+      parameters:
+      - name: "signature"
+        in: "header"
+        required: true
+        type: "string"
       requestBody:
         content:
           '*/*':
@@ -812,11 +820,11 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      # parameters:
-      # - name: "param"
-      #   in: "header"
-      #   required: true
-      #   type: "string"
+      parameters:
+      - name: "signature"
+        in: "header"
+        required: true
+        type: "string"
       requestBody:
         content:
           '*/*':
@@ -840,11 +848,11 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      # parameters:
-      # - name: "param"
-      #   in: "header"
-      #   required: true
-      #   type: "string"
+      parameters:
+      - name: "signature"
+        in: "header"
+        required: true
+        type: "string"
       requestBody:
         content:
           '*/*':
