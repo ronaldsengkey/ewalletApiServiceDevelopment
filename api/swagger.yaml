@@ -754,8 +754,126 @@ paths:
           description: "internal server error"
       x-swagger-router-controller: "helpdesk"
 
+  /faq:
+    get:
+      tags:
+      - "get faq data"
+      summary: "it faq"
+      operationId: "getFaq"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "param"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "request success"
+        406:
+          description: "request"
+        500:
+          description: "internal server error"
+      x-swagger-router-controller: "faq"
+    post:
+      tags:
+      - "post faq data"
+      summary: "it faq"
+      operationId: "postFaq"
+      produces:
+      - "application/xml"
+      - "application/json"
+      # parameters:
+      # - name: "param"
+      #   in: "header"
+      #   required: true
+      #   type: "string"
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              required: false
+              $ref: '#/components/schemas/faqDataSchema'
+        required: false
+      responses:
+        200:
+          description: "request success"
+        406:
+          description: "request"
+        500:
+          description: "internal server error"
+      x-swagger-router-controller: "faq"
+    put:
+      tags:
+      - "put faq data"
+      summary: "it faq"
+      operationId: "putFaq"
+      produces:
+      - "application/xml"
+      - "application/json"
+      # parameters:
+      # - name: "param"
+      #   in: "header"
+      #   required: true
+      #   type: "string"
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              required: false
+              $ref: '#/components/schemas/faqDataSchema'
+        required: false
+      responses:
+        200:
+          description: "request success"
+        406:
+          description: "request"
+        500:
+          description: "internal server error"
+      x-swagger-router-controller: "faq"
+    delete:
+      tags:
+      - "delete faq data"
+      summary: "it faq"
+      operationId: "deleteFaq"
+      produces:
+      - "application/xml"
+      - "application/json"
+      # parameters:
+      # - name: "param"
+      #   in: "header"
+      #   required: true
+      #   type: "string"
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              required: false
+              $ref: '#/components/schemas/faqDataSchema'
+        required: false
+      responses:
+        200:
+          description: "request success"
+        406:
+          description: "request"
+        500:
+          description: "internal server error"
+      x-swagger-router-controller: "faq"
+
 components:
   schemas:
+    faqDataSchema:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          example: "60f8de4dba7a2340000000000"
+        topic:
+          type: "string"
+        answer:
+          type: "string"
+
     updateHelpdeskSchema:
       type: "object"
       properties:
