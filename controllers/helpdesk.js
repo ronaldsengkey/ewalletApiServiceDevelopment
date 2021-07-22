@@ -39,7 +39,7 @@ module.exports.putHelpdesk = async function(req, res){
     try {
         let param = req.body;
         let result = await helpdeskModel.putHelpdesk(param);
-        if (result.length) {
+        if (result) {
             response = {
                 "responseCode": process.env.SUCCESS_RESPONSE,
                 "responseMessage": "success"
