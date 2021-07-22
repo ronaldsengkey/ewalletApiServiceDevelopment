@@ -21,6 +21,14 @@ const newSchema = new Schema({
     raw: {
         type: String,
         required: false
+    },
+    status: {
+        type: String,
+        required: false
+    },
+    category: {
+        type: String,
+        required: false
     }
 },{
     timestamps: true

@@ -50,7 +50,9 @@ bot.on('message', async (msg) => {
                 type: "telegram",
                 text: msg.text,
                 from: from,
-                raw: JSON.stringify(msg)
+                raw: JSON.stringify(msg),
+                status: "pending",
+                category: "general"
             });
             let save = await helpdesk.save();
             if (save) {
