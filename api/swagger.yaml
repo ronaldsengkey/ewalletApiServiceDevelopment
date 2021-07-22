@@ -725,9 +725,50 @@ paths:
         500:
           description: "internal server error"
       x-swagger-router-controller: "helpdesk"
+    put:
+      tags:
+      - "put helpdesk data"
+      summary: "it helpdesk"
+      operationId: "putHelpdesk"
+      produces:
+      - "application/xml"
+      - "application/json"
+      # parameters:
+      # - name: "param"
+      #   in: "header"
+      #   required: true
+      #   type: "string"
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              required: false
+              $ref: '#/components/schemas/updateHelpdeskSchema'
+        required: false
+      responses:
+        200:
+          description: "request success"
+        406:
+          description: "request"
+        500:
+          description: "internal server error"
+      x-swagger-router-controller: "helpdesk"
 
 components:
   schemas:
+    updateHelpdeskSchema:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          example: "60f8de4dba7a2340000000000"
+        status:
+          type: "string"
+          example: "pending"
+        category:
+          type: "string"
+          example: "general"
+
     updateGoogleEmail:
       type: "object"
       properties:

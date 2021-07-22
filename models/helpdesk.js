@@ -29,3 +29,29 @@ exports.getHelpdesk = async function(data = {
         }
     })
 }
+
+exports.putHelpdesk = async function(data = {
+    id: "",
+    status: "",
+    category: ""
+}){
+    return new Promise(async function(resolve){
+        try {
+            let param = {
+                id: data.id
+            }
+            let body = {}
+            if (data.status) {
+                body.status = data.status
+            }
+            if (data.category) {
+                body.category = data.category
+            }
+            let result = await helpdeskSchema.findOneAndUpdate(param, body);
+            return resolve(result);    
+        } catch (error) {
+            console.log("error::", error);
+            return resolve(false)
+        }
+    })
+}
