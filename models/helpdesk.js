@@ -38,7 +38,7 @@ exports.putHelpdesk = async function(data = {
     return new Promise(async function(resolve){
         try {
             let param = {
-                id: data.id
+                _id: data.id
             }
             let body = {}
             if (data.status) {
