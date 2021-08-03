@@ -359,6 +359,44 @@ exports.listEvents = function(param, auth){
     })
 }
 
+exports.geoCode = function (data) {
+    return new Promise(function (resolve, reject) {
+        try {
+            let mapsUrl = "https://maps.googleapis.com/maps/api/geocode/json";
+            let key = process.env.GOOGLE_MAPS_API_KEY;
+            request.post({
+                "url": mapsUrl + "?latlng=" + data.latlng + "&key=" + key,
+                "timeout": 0,
+            }, function (error, response, body) {
+                if (error) {
+                    reject(process.env.ERRORINTERNAL_RESPONSE);
+                }
+                console.log('geoCode ::', body)
+                let result = JSON.parse(body);
+                if (result.status == "OK") {
+                    resolve({
+                        "responseCode": process.env.SUCCESS_RESPONSE,
+                        "responseMessage": "Success get map",
+                        "data": result.results
+                    })    
+                }
+                else {
+                    resolve({
+                        "responseCode": process.env.NOTFOUND_RESPONSE,
+                        "responseMessage": "Failed get maps"
+                    })
+                }
+            })
+        } catch (e) {
+            console.log('Error checking token => ', e)
+            reject({
+                "responseCode": process.env.ERRORINTERNAL_RESPONSE,
+                "responseMessage": "Something wrong please try again!!"
+            });
+        }
+    })
+}
+
 exports.getAddressCoordinate = function (data) {
     return new Promise(function (resolve, reject) {
         try {

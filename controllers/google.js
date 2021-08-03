@@ -132,8 +132,13 @@ module.exports.getAddressCoordinate = async function getAddressCoordinate(req, r
     //   let ceto = await account.checkToken(token);
     //   if (ceto.responseCode == process.env.SUCCESS_RESPONSE) {
           //validasi belum          
-          let a = await googleApi.getAddressCoordinate(body)
-          utils.writeJson(res, a);
+        let a; 
+        if(body.latlng){              
+            a = await googleApi.geoCode(body)
+        }else{
+            a = await googleApi.getAddressCoordinate(body)
+        }
+        utils.writeJson(res, a);
     //   } else {
     //       let response = {
     //           "responseCode": process.env.UNAUTHORIZED_RESPONSE,
