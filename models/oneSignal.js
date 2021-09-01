@@ -7,6 +7,7 @@ const request = require('request');
 
 exports.savePlayerId = function(data){
     return new Promise(async function(resolve){
+        let client = false;
         try {
             let query = {
 				account_id: data.account_id,
@@ -21,16 +22,23 @@ exports.savePlayerId = function(data){
 				new: true, 
 				setDefaultsOnInsert: true
 			}
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
 			let result = await oneSignalSchema.findOneAndUpdate(query, update, option);
 			if (result === null) {
-				return resolve(false);
+				resolve(false);
 			} else {
 				console.log("savePlayerId: ", result)
-				return resolve(result);
+				resolve(result);
 			} 
         } catch (error) {
             console.log("savePlayerId::", error);
-            return resolve(false);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
     })
 }
@@ -61,25 +69,40 @@ exports.sendNotification = function(data){
 }
 
 async function getPlayerId(data){
-    let $in = []
-    for(let account_id of data.account_id){
-        $in.push(account_id);
-    }
-    let query = {
-        "account_category": data.account_category,
-        "account_id": { $in }
-    }
-    let result = await oneSignalSchema.find(query);
-    if (result === null) {
-        return false;
-    } else {
-        console.log("getPlayerId: ", result);
-        let playerId = [];
-        for(let res of result){
-            playerId.push(res.player_id);
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            let $in = []
+            for(let account_id of data.account_id){
+                $in.push(account_id);
+            }
+            let query = {
+                "account_category": data.account_category,
+                "account_id": { $in }
+            }
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            let result = await oneSignalSchema.find(query);
+            if (result === null) {
+                resolve(false);
+            } else {
+                console.log("getPlayerId: ", result);
+                let playerId = [];
+                for(let res of result){
+                    playerId.push(res.player_id);
+                }
+                resolve(playerId);
+            }
+        } catch (error) {
+            console.log("getPlayerId::", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
-        return playerId;
-    }
+    })
 }
 
 async function sendNotificationRequest(data){

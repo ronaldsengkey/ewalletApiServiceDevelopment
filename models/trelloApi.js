@@ -1,3 +1,5 @@
+const mongoose = require('mongoose').set('debug', true);
+const mongoConf = require('../config/mongo');
 const tokenService = require('../service/tokenService');
 const request = require('./request');
 const url = process.env.TRELLO_HOST;
@@ -8,30 +10,52 @@ exports.getLoginUrl = function(){
 }
 
 exports.saveToken = async function(data){
-    try {
-        let body = {
-            employeeId: data.employeeId,
-            token: data.token,
-            type: 'trello'
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            let body = {
+                employeeId: data.employeeId,
+                token: data.token,
+                type: 'trello'
+            }
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            let result = await tokenService.saveToken(body);
+            resolve(result);    
+        } catch (error) {
+            console.log("saveToken::", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
-        let result = await tokenService.saveToken(body);
-        return result;    
-    } catch (error) {
-        return false
-    }
+    })
 }
 
 exports.getToken = async function(data){
-    try {
-        let body = {
-            employeeId: data.employeeId,
-            type: 'trello'
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            let body = {
+                employeeId: data.employeeId,
+                type: 'trello'
+            }
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            let result = await tokenService.getToken(body);
+            resolve(result);    
+        } catch (error) {
+            console.log("getToken::", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
-        let result = await tokenService.getToken(body);
-        return result;    
-    } catch (error) {
-        return false;
-    }
+    })
 }
 
 exports.checkToken = async function(token){

@@ -1,11 +1,14 @@
 'use strict';
 const schema = require('../service/faqSchema');
+const mongoose = require('mongoose').set('debug', true);
+const mongoConf = require('../config/mongo');
 
 exports.getFaq = async function(data = {
     topic: "",
     answer: ""
 }){
     return new Promise(async function(resolve){
+        let client = false;
         try {
             let param = {};
             if (data.topic) {
@@ -20,11 +23,18 @@ exports.getFaq = async function(data = {
                     $options: 'i' 
                 }
             }
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
             let result = await schema.find(param);
-            return resolve(result);
+            resolve(result);
         } catch (error) {
-            console.log("error::", error);
-            return resolve(false)
+            console.log("getFaq::", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
     })
 }
@@ -34,16 +44,24 @@ exports.postFaq = async function(data = {
     topic: ""
 }){
     return new Promise(async function(resolve){
+        let client = false;
         try {
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
             let newData = new schema({
                 topic: data.topic,
                 answer: data.answer
             });
             let result = await newData.save();
-            return resolve(result);    
+            resolve(result);    
         } catch (error) {
-            console.log("error::", error);
-            return resolve(false)
+            console.log("postFaq::", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
     })
 }
@@ -54,6 +72,7 @@ exports.putFaq = async function(data = {
     topic: ""
 }){
     return new Promise(async function(resolve){
+        let client = false;
         try {
             let param = {
                 _id: data.id
@@ -65,11 +84,18 @@ exports.putFaq = async function(data = {
             if (data.answer) {
                 body.answer = data.answer
             }
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
             let result = await schema.findOneAndUpdate(param, body);
-            return resolve(result);    
+            resolve(result);    
         } catch (error) {
-            console.log("error::", error);
-            return resolve(false)
+            console.log("putFaq::", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
     })
 }
@@ -78,15 +104,23 @@ exports.deleteFaq = async function(data = {
     id: ""
 }){
     return new Promise(async function(resolve){
+        let client = false;
         try {
             let param = {
                 _id: data.id
             }
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
             let result = await schema.deleteMany(param);
-            return resolve(result); 
+            resolve(result); 
         } catch (error) {
-            console.log("error::", error);
-            return resolve(false)           
+            console.log("deleteFaq::", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
     })
 }

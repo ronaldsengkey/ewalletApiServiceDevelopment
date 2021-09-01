@@ -1,24 +1,35 @@
 var request = require('request');
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const _this = this;
+const mongoose = require('mongoose').set('debug', true);
+const mongoConf = require('../config/mongo');
 const botSchema = require('../service/telegramBotSchema');
 
 exports.getSubscriber = async function(data){
-    let response = false;
-    try {
-        let result = await botSchema.find(data).select({
-            "_id": 0,
-            "chatId": 1,
-            "name": 1,
-            "type": 1,
-        }).sort({
-            name: 1
-        });
-        response = result;
-    } catch (error) {
-        console.log("getSubscriber::", error);
-    }
-    return response;
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            let result = await botSchema.find(data).select({
+                "_id": 0,
+                "chatId": 1,
+                "name": 1,
+                "type": 1,
+            }).sort({
+                name: 1
+            });
+            resolve(result);
+        } catch (error) {
+            console.log("getSubscriber::", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
+        }
+    })
 }
 
 exports.sendMessages = async function(data){

@@ -5,121 +5,166 @@ const request = require('request');
 const pgCon = require('../config/pgConfig');
 
 async function getMessage (id) {
-    try {
-        let queryParams = {
-            $or: [{
-                    'senderId': id
-                },
-                {
-                    'receiverId': id
-                }
-            ]
-        };
-        mongoose.Promise = global.Promise;
-        // await mongoose.connect(mongoConf.mongoDb.url);
-        var query = await schema.find(queryParams).sort({
-            'created_at': 1
-        })
-        if (query === null) {
-            return process.env.NOTFOUND_RESPONSE;
-        } else {
-            console.log("getMessage: ", query)
-            return query;
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            let queryParams = {
+                $or: [{
+                        'senderId': id
+                    },
+                    {
+                        'receiverId': id
+                    }
+                ]
+            };
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            var query = await schema.find(queryParams).sort({
+                'created_at': 1
+            })
+            if (query === null) {
+                resolve(process.env.NOTFOUND_RESPONSE);
+            } else {
+                console.log("getMessage: ", query)
+                resolve(query);
+            }
+        } catch (error) {
+            console.log("getMessage: ", err);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
-    } catch (error) {
-        console.log("getMessage: ", err);
-    }
+    })
 }
 
 async function findMessage (data) {
-    try {
-        let queryParams = {
-            $or: [{
-                    'senderId': data.id,
-                    'receiverId': data.partnerId
-                },
-                {
-                    'senderId': data.partnerId,
-                    'receiverId': data.id
-                }
-            ]
-        };
-        mongoose.Promise = global.Promise;
-        // await mongoose.connect(mongoConf.mongoDb.url);
-        var query = await schema.find(queryParams).sort({
-            'created_at': 1
-        })
-        if (query === null) {
-            return process.env.NOTFOUND_RESPONSE;
-        } else {
-            console.log("GET NOTIF SUCCESS ", query)
-            return query;
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            let queryParams = {
+                $or: [{
+                        'senderId': data.id,
+                        'receiverId': data.partnerId
+                    },
+                    {
+                        'senderId': data.partnerId,
+                        'receiverId': data.id
+                    }
+                ]
+            };
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            var query = await schema.find(queryParams).sort({
+                'created_at': 1
+            })
+            if (query === null) {
+                resolve(process.env.NOTFOUND_RESPONSE);
+            } else {
+                console.log("GET NOTIF SUCCESS ", query)
+                resolve(query);
+            }
+        } catch (error) {
+            console.log("error get findMessage: ", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
-    } catch (error) {
-        console.log("error get findMessage: ", error);
-        
-    }
+    })
 }
 
 async function findOneMessage (id) {
-    try {
-        let queryParams = {
-            "_id": id
-        };
-        mongoose.Promise = global.Promise;
-        // await mongoose.connect(mongoConf.mongoDb.url);
-        var query = await schema.find(queryParams).sort({
-            'created_at': 1
-        })
-        if (query === null) {
-            return process.env.NOTFOUND_RESPONSE;
-        } else {
-            console.log("GET NOTIF SUCCESS ", query)
-            return query;
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            let queryParams = {
+                "_id": id
+            };
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            var query = await schema.find(queryParams).sort({
+                'created_at': 1
+            })
+            if (query === null) {
+                resolve(process.env.NOTFOUND_RESPONSE);
+            } else {
+                console.log("GET NOTIF SUCCESS ", query)
+                resolve(query);
+            }
+        } catch (error) {
+            console.log("error findOneMessage: ", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
-    } catch (error) {
-        console.log("error findOneMessage: ", error);
-        
-    }
+    })
 }
 
 async function createMessage (data) {
-    try {
-        // await mongoose.connect(mongoConf.mongoDb.url);
-        var message = new schema({
-            senderId: data.senderId,
-            receiverId: data.receiverId,
-            message: data.message,
-            status: data.status,
-            type: data.type,
-            read: data.read,
-        });
-
-        await message.save();
-        // await saveStatus.set('transactionCode',Buffer.from("O:"+saveStatus._id).toString('base64'));
-        // await saveStatus.save();
-        return message;
-    } catch (err) {
-        console.log("createMessage: ", err);
-    }
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            var message = new schema({
+                senderId: data.senderId,
+                receiverId: data.receiverId,
+                message: data.message,
+                status: data.status,
+                type: data.type,
+                read: data.read,
+            });
+    
+            await message.save();
+            // await saveStatus.set('transactionCode',Buffer.from("O:"+saveStatus._id).toString('base64'));
+            // await saveStatus.save();
+            return message;
+        } catch (err) {
+            console.log("createMessage: ", err);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
+        }
+    })
 }
 
 async function updateMessage (data) {
-    try {
-        var result = await schema.findOneAndUpdate(data.param, {
-            $set: data.data
-        }, {
-            useFindAndModify: false
-        });
-        if (result === null) {
-            return(process.env.NOTFOUND_RESPONSE);
-        } else {
-            return(process.env.SUCCESS_RESPONSE);
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            var result = await schema.findOneAndUpdate(data.param, {
+                $set: data.data
+            }, {
+                useFindAndModify: false
+            });
+            if (result === null) {
+                resolve(process.env.NOTFOUND_RESPONSE);
+            } else {
+                resolve(process.env.SUCCESS_RESPONSE);
+            }
+        } catch (error) {
+            console.log(error)
+            resolve(process.env.ERRORINTERNAL_RESPONSE);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
-    } catch (error) {
-        console.log(error)
-        return process.env.ERRORINTERNAL_RESPONSE;
-    }
+    })
 }
 
 exports.create = function (data) {

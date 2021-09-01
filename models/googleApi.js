@@ -188,23 +188,31 @@ exports.getAuthorize = function (employeeId, oAuth2Client){
 }
 
 async function getToken (id) {
-    try {
-        let queryParams = {
-            employeeId: id
-        };
-        // mongoose.Promise = global.Promise;
-        // await mongoose.connect(mongoConf.mongoDb.url);
-        var query = await schema.findOne(queryParams);
-        if (query === null) {
-            return false;
-        } else {
-            console.log("getToken: ", query)
-            return query.token;
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            let queryParams = {
+                employeeId: id
+            };
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            var query = await schema.findOne(queryParams);
+            if (query === null) {
+                resolve(false);
+            } else {
+                console.log("getToken: ", query)
+                resolve(query.token);
+            }
+        } catch (error) {
+            console.log("getToken: ", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
-    } catch (error) {
-        console.log("getToken: ", error);
-        return false
-    }
+    })
 }
 
 
@@ -240,13 +248,27 @@ exports.createGoogleToken = function(data, oAuth2Client) {
 }
 
 async function saveToken(employeeId, token){
-    // await mongoose.connect(mongoConf.mongoDb.url);
-    var googleToken = new schema({
-        employeeId: employeeId,
-        token: token
-    });
-    await googleToken.save();
-    return googleToken;
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            var googleToken = new schema({
+                employeeId: employeeId,
+                token: token
+            });
+            await googleToken.save();
+            resolve(googleToken);
+        } catch (error) {
+            console.log("saveToken::", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
+        }
+    })
 }
 
 exports.insertEvent = function(data, auth){
@@ -477,31 +499,53 @@ exports.getAuthentiatorQr = function (data){
 }
 
 async function getAuthSecret (data) {
-    try {
-        let queryParams = {
-            accountId: data.accountId,
-            accountCategory: data.accountCategory,
-        };
-        // mongoose.Promise = global.Promise;
-        // await mongoose.connect(mongoConf.mongoDb.url);
-        var query = await googleAuthSchema.findOne(queryParams);
-        if (query === null) {
-            return false;
-        } else {
-            console.log("getAuthSecret: ", query)
-            return query.secret;
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            let queryParams = {
+                accountId: data.accountId,
+                accountCategory: data.accountCategory,
+            };
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            var query = await googleAuthSchema.findOne(queryParams);
+            if (query === null) {
+                resolve(false);
+            } else {
+                console.log("getAuthSecret: ", query)
+                resolve(query.secret);
+            }
+        } catch (error) {
+            console.log("getAuthSecret: ", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
         }
-    } catch (error) {
-        console.log("getAuthSecret: ", error);
-        return false
-    }
+    })
 }
 
 async function saveAuthSecret(data){
-    // await mongoose.connect(mongoConf.mongoDb.url);
-    var googleSecret = new googleAuthSchema(data);
-    await googleSecret.save();
-    return googleSecret;
+    return new Promise(async function(resolve){
+        let client = false;
+        try {
+            client = await mongoose.connect(mongoConf.mongoDb.url, mongoConf.mongoDb.options);
+            var googleSecret = new googleAuthSchema(data);
+            await googleSecret.save();
+            resolve(googleSecret);
+        } catch (error) {
+            console.log("saveAuthSecret: ", error);
+            resolve(false);
+        } finally {
+            if (client) {
+                // console.log("client::", client);
+                await mongoose.connection.close();
+                console.log("Mongo close");
+            }
+        }
+    })
 }
 
 exports.postGoogleAuthenticator = function (data){
